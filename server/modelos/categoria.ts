@@ -1,7 +1,20 @@
-import { Sequelize, DataTypes, Model } from 'sequelize';
+import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 import Conexion from '../clases/Conexion';
 
-export  default class Categoria extends Model {
+interface CategoriaAttributes {
+    id_categoria: number;
+    nombre: string;
+    descripcion: string;
+    esta_activa: boolean;
+}
+
+interface CategoriaOptional extends Optional<CategoriaAttributes, 'id_categoria' | 'esta_activa'> { }
+
+export  default class Categoria extends Model<CategoriaAttributes, CategoriaOptional> implements CategoriaAttributes {
+    public id_categoria!: number;
+    public nombre!: string;
+    public descripcion!: string;
+    public esta_activa!: boolean;
 }
 
 Categoria.init({
@@ -19,7 +32,8 @@ Categoria.init({
         type: DataTypes.TEXT
     },
     esta_activa: {
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
 },{
     sequelize: Conexion.getSequelize(),
