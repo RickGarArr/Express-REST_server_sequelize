@@ -14,7 +14,13 @@ export default class Conexion {
                 host: process.env.DB_HOST,
                 port: Number(process.env.DB_PORT),
                 dialect: 'mysql',
+                timezone: '-06:00',
                 logging: false,
+                define: {
+                    charset: 'utf8mb4',
+                    collate: 'utf8mb4_0900_ai_ci',
+                    engine: 'innoDB'
+                },
                 pool: {
                     min: 0,
                     max: 5,
@@ -23,7 +29,6 @@ export default class Conexion {
                 }
             }
         );
-
     }
 
     static autenticar() {

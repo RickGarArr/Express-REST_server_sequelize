@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { generarToken } from "../helpers/JWToken";
-import bcrypt, { compareSync } from 'bcrypt';
+import { UniqueConstraintError } from "sequelize";
+import bcrypt from 'bcrypt';
 import Categoria from '../modelos/categoria';
 import Administrador from '../modelos/administrador';
-import { UniqueConstraintError } from "sequelize";
+import { generarToken } from "../helpers/JWToken";
 import sendErrors from "../helpers/sendErrors";
 
 export async function get(req: Request, res: Response) {
@@ -39,9 +39,7 @@ export async function crearPerfil(req: Request, res: Response) {
             const errores = err.errors.map(error => `El valor ${error.value} ya existe en la base datos`);
             sendErrors(res, ...errores);
         } else {
-            res.json({
-                ok: false
-            });
+            sendErrors(res, 'error al crear el usuario');
         }
     }
 }
@@ -67,5 +65,23 @@ export async function login(req: Request, res: Response) {
         });
     } catch (error) {
         console.log(error);
+    }
+}
+
+export async function createCategoria(req: Request, res: Response) {
+
+    try {
+        const categoriaDB = await Categoria.create({nombre: req.body.nombre, descripcion: req.body.descripcion});
+        res.json({
+            msg: 'Categoria agregada correctamente'
+        });
+    } catch (err) {
+        if (err instanceof UniqueConstraintError) {
+            const errores = err.errors.map(error => `El valor ${error.value} ya existe en la base datos`);
+            sendErrors(res, ...errores);
+        } else {
+            sendErrors(res, 'error al crear categoria');
+        }
+        
     }
 }
